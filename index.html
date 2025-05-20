@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能系统</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --danger-color: #f72585;
+            --success-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.5;
+            padding: 10px;
+            font-size: 15px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .copy-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .result-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .result-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+        
+        .result-table th, .result-table td {
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-table th {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+        
+        .highlight {
+            background-color: rgba(67, 97, 238, 0.1);
+            font-weight: 500;
+        }
+        
+        .zodiac-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .number-item {
+            background-color: white;
+            border-radius: 4px;
+            padding: 8px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .number-value {
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .copy-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .copy-notification.show {
+            opacity: 1;
+        }
+        
+        .formatted-result {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+            border: 1px solid #eee;
+        }
+        
+        .formatted-line {
+            margin-bottom: 5px;
+        }
+        
+        /* 登录注册样式 */
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+        }
+        
+        .auth-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+        }
+        
+        .auth-switch {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .auth-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .user-info {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .username-btn {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0;
+            text-decoration: underline;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        /* 会员码提示 */
+        .member-code-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        /* 生肖统计页特定样式 */
+        .zodiac-highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .zodiac-count {
+            margin-right: 5px;
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* 调整主标签页样式 */
+        .main-tab-buttons {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin: 15px 0;
+            padding: 5px;
+        }
+        
+        .main-tab-btn {
+            flex: 1;
+            padding: 10px;
+            transition: all 0.3s;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .main-tab-btn.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        /* 历史记录弹窗样式 */
+        .history-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .history-modal.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .history-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+        
+        .close-history {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .history-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .history-date {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        
+        .history-stats {
+            font-size: 0.9rem;
+        }
+        
+        .no-history {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        /* 保存按钮样式 */
+        .save-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        /* 生肖输入框容器 */
+        .zodiac-input-container {
+            display: none;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 数字统计特定样式 */
+        .number-stats-container {
+            margin-top: 15px;
+        }
+        
+        .number-stats-result {
+            font-family: monospace;
+            white-space: pre-wrap;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录/注册表单 -->
+        <div id="authContainer" class="auth-container">
+            <div id="loginForm" class="auth-form">
+                <h2>用户登录</h2>
+                <div class="form-group">
+                    <label for="loginUsername">用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button id="loginBtn" class="btn btn-primary">登录</button>
+                <div class="auth-switch">
+                    还没有账号？<a id="showRegister">立即注册</a>
+                </div>
+            </div>
+            
+            <div id="registerForm" class="auth-form hidden">
+                <h2>用户注册</h2>
+                <div class="form-group">
+                    <label for="registerUsername">用户名</label>
+                    <input type="text" id="registerUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">密码</label>
+                    <input type="password" id="registerPassword" placeholder="请输入密码">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <input type="password" id="confirmPassword" placeholder="请再次输入密码">
+                </div>
+                <div class="form-group">
+                    <label for="memberCode">会员码 <span style="color:#999">(请联系作者获取)</span></label>
+                    <input type="password" id="memberCode" placeholder="请输入会员码">
+                </div>
+                <button id="registerBtn" class="btn btn-primary">注册</button>
+                <div class="auth-switch">
+                    已有账号？<a id="showLogin">立即登录</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主应用内容 (默认隐藏) -->
+        <div id="appContent" class="hidden">
+            <header>
+                <h1>智能系统</h1>
+                <p>数据统计与分析工具</p>
+            </header>
+            
+            <div class="user-info">
+                <button id="usernameBtn" class="username-btn"></button>
+                <button class="logout-btn" id="logoutBtn">退出登录</button>
+            </div>
+            
+            <!-- 主标签导航 -->
+            <div class="main-tab-buttons">
+                <button class="main-tab-btn active" data-tab="pingteTab">平特统计</button>
+                <button class="main-tab-btn" data-tab="zodiacTab">生肖统计</button>
+                <button class="main-tab-btn" data-tab="numberTab">数字统计</button>
+            </div>
+            
+            <!-- 平特统计页 -->
+            <div id="pingteTab" class="tab-content active">
+                <div class="card">
+                    <div class="card-title">输入平特数据</div>
+                    <textarea id="inputData" placeholder="粘贴竖排数据，例如：
+139期(开奖时间:2025-05-19)
+38
+龙
+27
+兔
+47
+羊"></textarea>
+                    <div class="btn-group">
+                        <button id="analyzeBtn" class="btn btn-primary">开始统计</button>
+                        <button id="clearBtn" class="btn btn-danger">清空</button>
+                    </div>
+                    <button id="saveStatsBtn" class="save-btn">保存本次统计结果</button>
+                </div>
+                
+                <div id="results" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalNumbers">0</div>
+                            <div class="stat-label">总号码数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalPeriods">0</div>
+                            <div class="stat-label">总期数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mostTail">-</div>
+                            <div class="stat-label">最多尾数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="mostZodiac">-</div>
+                            <div class="stat-label">最多生肖</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-columns">
+                        <!-- 尾数统计 -->
+                        <div class="card">
+                            <div class="card-title">
+                                <span>尾数统计</span>
+                                <button class="copy-btn" data-target="tailCountResult">复制</button>
+                            </div>
+                            <div class="formatted-result" id="tailCountResult"></div>
+                        </div>
+                        
+                        <!-- 生肖统计 -->
+                        <div class="card">
+                            <div class="card-title">
+                                <span>生肖统计</span>
+                                <button class="copy-btn" data-target="zodiacCountResult">复制</button>
+                            </div>
+                            <div class="formatted-result" id="zodiacCountResult"></div>
+                        </div>
+                        
+                        <!-- 号码统计 -->
+                        <div class="card">
+                            <div class="card-title">
+                                <span>号码统计</span>
+                                <button class="copy-btn" data-target="numberCountResult">复制</button>
+                            </div>
+                            <div class="formatted-result" id="numberCountResult"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 生肖统计页 -->
+            <div id="zodiacTab" class="tab-content">
+                <div class="card zodiac-input-container">
+                    <div class="card-title">生肖次数分组统计</div>
+                    <textarea id="zodiacInput" placeholder="请输入任意格式生肖文本，例如：鼠牛虎兔龙蛇马羊猴鸡狗猪"></textarea>
+                    <div class="btn-group">
+                        <button id="analyzeZodiacBtn" class="btn btn-primary">生成分组统计</button>
+                        <button id="clearZodiacBtn" class="btn btn-danger">清空</button>
+                    </div>
+                </div>
+                
+                <div class="card" id="zodiacResults" style="display:none;">
+                    <div class="card-title">
+                        <span>生肖分组统计结果</span>
+                        <button class="copy-btn" data-target="zodiacResultText">复制</button>
+                    </div>
+                    <div class="formatted-result" id="zodiacResultText"></div>
+                </div>
+            </div>
+            
+            <!-- 数字统计页 -->
+            <div id="numberTab" class="tab-content">
+                <div class="card">
+                    <div class="card-title">01-49数字统计</div>
+                    <textarea id="numberInput" placeholder="输入包含01-49数字的文本，可以包含任何符号或标点，例如：
+25,25,25;03|09/27.33 39-45 47
+02 14 20 21 23 29 30 31 32 34 35 36 37 38 41 44 46 48"></textarea>
+                    <div class="btn-group">
+                        <button id="analyzeNumberBtn" class="btn btn-primary">开始统计</button>
+                        <button id="clearNumberBtn" class="btn btn-danger">清空</button>
+                    </div>
+                </div>
+                
+                <div class="card" id="numberResults" style="display:none;">
+                    <div class="card-title">
+                        <span>数字统计结果</span>
+                        <button class="copy-btn" data-target="numberResultText">复制</button>
+                    </div>
+                    <div class="number-stats-result" id="numberResultText"></div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>© 2025 智能数据统计工具</p>
+            </footer>
+            
+            <div class="copy-notification" id="copyNotification">已复制到剪贴板</div>
+            
+            <!-- 历史记录弹窗 -->
+            <div id="historyModal" class="history-modal">
+                <div class="history-content">
+                    <div class="history-header">
+                        <div class="history-title">历史统计记录</div>
+                        <button class="close-history" id="closeHistory">&times;</button>
+                    </div>
+                    <div id="historyList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 用户数据存储 (模拟数据库)
+            const users = JSON.parse(localStorage.getItem('lotteryStatsUsers')) || [];
+            let currentUser = null;
+            
+            // 公共会员码 (已隐藏)
+            const PUBLIC_MEMBER_CODE = "XA888";
+            
+            // DOM元素
+            const authContainer = document.getElementById('authContainer');
+            const appContent = document.getElementById('appContent');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const usernameBtn = document.getElementById('usernameBtn');
+            
+            // 统计功能相关元素
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const analyzeZodiacBtn = document.getElementById('analyzeZodiacBtn');
+            const clearZodiacBtn = document.getElementById('clearZodiacBtn');
+            const analyzeNumberBtn = document.getElementById('analyzeNumberBtn');
+            const clearNumberBtn = document.getElementById('clearNumberBtn');
+            const saveStatsBtn = document.getElementById('saveStatsBtn');
+            const copyNotification = document.getElementById('copyNotification');
+            
+            // 历史记录相关元素
+            const historyModal = document.getElementById('historyModal');
+            const closeHistory = document.getElementById('closeHistory');
+            const historyList = document.getElementById('historyList');
+            
+            // 生肖统计相关变量
+            const SHENGXIAO = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+            let lastZodiacResults = "";
+            
+            // 当前统计结果
+            let currentStats = null;
+            
+            // 页面数据存储
+            let pingteData = {
+                input: '',
+                results: null
+            };
+            
+            let zodiacData = {
+                input: '',
+                results: null
+            };
+            
+            let numberData = {
+                input: '',
+                results: null
+            };
+            
+            // 检查是否已登录
+            checkLoginStatus();
+            
+            // 主标签页切换
+            const mainTabBtns = document.querySelectorAll('.main-tab-btn');
+            mainTabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 保存当前页面的数据
+                    if (document.querySelector('.tab-content.active').id === 'pingteTab') {
+                        pingteData.input = document.getElementById('inputData').value;
+                        if (document.getElementById('results').style.display !== 'none') {
+                            pingteData.results = {
+                                totalNumbers: document.getElementById('totalNumbers').textContent,
+                                totalPeriods: document.getElementById('totalPeriods').textContent,
+                                mostTail: document.getElementById('mostTail').textContent,
+                                mostZodiac: document.getElementById('mostZodiac').textContent,
+                                tailCountResult: document.getElementById('tailCountResult').innerHTML,
+                                zodiacCountResult: document.getElementById('zodiacCountResult').innerHTML,
+                                numberCountResult: document.getElementById('numberCountResult').innerHTML
+                            };
+                        }
+                    } else if (document.querySelector('.tab-content.active').id === 'zodiacTab') {
+                        zodiacData.input = document.getElementById('zodiacInput').value;
+                        if (document.getElementById('zodiacResults').style.display !== 'none') {
+                            zodiacData.results = document.getElementById('zodiacResultText').innerHTML;
+                        }
+                    } else if (document.querySelector('.tab-content.active').id === 'numberTab') {
+                        numberData.input = document.getElementById('numberInput').value;
+                        if (document.getElementById('numberResults').style.display !== 'none') {
+                            numberData.results = document.getElementById('numberResultText').innerHTML;
+                        }
+                    }
+                    
+                    // 切换标签页
+                    document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // 如果是生肖统计页，显示输入框
+                    if (tabId === 'zodiacTab') {
+                        document.querySelector('.zodiac-input-container').style.display = 'block';
+                        // 恢复数据
+                        if (zodiacData.input) {
+                            document.getElementById('zodiacInput').value = zodiacData.input;
+                        }
+                        if (zodiacData.results) {
+                            document.getElementById('zodiacResults').style.display = 'block';
+                            document.getElementById('zodiacResultText').innerHTML = zodiacData.results;
+                        }
+                    } 
+                    // 如果是数字统计页
+                    else if (tabId === 'numberTab') {
+                        // 恢复数字数据
+                        if (numberData.input) {
+                            document.getElementById('numberInput').value = numberData.input;
+                        }
+                        if (numberData.results) {
+                            document.getElementById('numberResults').style.display = 'block';
+                            document.getElementById('numberResultText').innerHTML = numberData.results;
+                        }
+                    }
+                    else {
+                        // 恢复平特数据
+                        if (pingteData.input) {
+                            document.getElementById('inputData').value = pingteData.input;
+                        }
+                        if (pingteData.results) {
+                            document.getElementById('results').style.display = 'block';
+                            document.getElementById('totalNumbers').textContent = pingteData.results.totalNumbers;
+                            document.getElementById('totalPeriods').textContent = pingteData.results.totalPeriods;
+                            document.getElementById('mostTail').textContent = pingteData.results.mostTail;
+                            document.getElementById('mostZodiac').textContent = pingteData.results.mostZodiac;
+                            document.getElementById('tailCountResult').innerHTML = pingteData.results.tailCountResult;
+                            document.getElementById('zodiacCountResult').innerHTML = pingteData.results.zodiacCountResult;
+                            document.getElementById('numberCountResult').innerHTML = pingteData.results.numberCountResult;
+                        }
+                    }
+                });
+            });
+            
+            // 显示注册表单
+            showRegister.addEventListener('click', function() {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+            });
+            
+            // 显示登录表单
+            showLogin.addEventListener('click', function() {
+                registerForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+            });
+            
+            // 登录按钮点击事件
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                
+                if (!username || !password) {
+                    alert('请输入用户名和密码');
+                    return;
+                }
+                
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    // 登录成功
+                    currentUser = user;
+                    localStorage.setItem('lotteryStatsCurrentUser', JSON.stringify(user));
+                    checkLoginStatus();
+                } else {
+                    alert('用户名或密码错误');
+                }
+            });
+            
+            // 注册按钮点击事件
+            registerBtn.addEventListener('click', function() {
+                const username = document.getElementById('registerUsername').value.trim();
+                const password = document.getElementById('registerPassword').value.trim();
+                const confirmPassword = document.getElementById('confirmPassword').value.trim();
+                const memberCode = document.getElementById('memberCode').value.trim();
+                
+                if (!username || !password || !confirmPassword || !memberCode) {
+                    alert('请填写所有字段');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                if (memberCode !== PUBLIC_MEMBER_CODE) {
+                    alert('会员码不正确，请联系卖家获取');
+                    return;
+                }
+                
+                if (users.some(u => u.username === username)) {
+                    alert('用户名已存在');
+                    return;
+                }
+                
+                // 注册新用户
+                const newUser = { 
+                    username, 
+                    password,
+                    statsHistory: []  // 初始化历史记录数组
+                };
+                users.push(newUser);
+                localStorage.setItem('lotteryStatsUsers', JSON.stringify(users));
+                
+                // 自动登录
+                currentUser = newUser;
+                localStorage.setItem('lotteryStatsCurrentUser', JSON.stringify(newUser));
+                checkLoginStatus();
+                
+                alert('注册成功！');
+            });
+            
+            // 退出登录
+            logoutBtn.addEventListener('click', function() {
+                currentUser = null;
+                localStorage.removeItem('lotteryStatsCurrentUser');
+                checkLoginStatus();
+            });
+            
+            // 检查登录状态
+            function checkLoginStatus() {
+                const storedUser = JSON.parse(localStorage.getItem('lotteryStatsCurrentUser'));
+                
+                if (storedUser) {
+                    currentUser = storedUser;
+                    authContainer.classList.add('hidden');
+                    appContent.classList.remove('hidden');
+                    usernameBtn.textContent = currentUser.username;
+                    
+                    // 更新用户数据中的历史记录
+                    const userIndex = users.findIndex(u => u.username === currentUser.username);
+                    if (userIndex !== -1) {
+                        currentUser = users[userIndex];
+                    }
+                } else {
+                    authContainer.classList.remove('hidden');
+                    appContent.classList.add('hidden');
+                }
+            }
+            
+            // 平特统计功能
+            analyzeBtn.addEventListener('click', analyzeData);
+            clearBtn.addEventListener('click', clearData);
+            
+            // 生肖统计功能
+            analyzeZodiacBtn.addEventListener('click', analyzeZodiacData);
+            clearZodiacBtn.addEventListener('click', clearZodiacData);
+            
+            // 数字统计功能
+            analyzeNumberBtn.addEventListener('click', analyzeNumberData);
+            clearNumberBtn.addEventListener('click', clearNumberData);
+            
+            // 保存统计结果
+            saveStatsBtn.addEventListener('click', saveStats);
+            
+            // 用户名点击显示历史记录
+            usernameBtn.addEventListener('click', showHistory);
+            
+            // 关闭历史记录弹窗
+            closeHistory.addEventListener('click', function() {
+                historyModal.classList.remove('show');
+            });
+            
+            // 复制功能
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-btn')) {
+                    const targetId = e.target.getAttribute('data-target');
+                    let textToCopy;
+                    
+                    if (targetId === 'zodiacResultText') {
+                        textToCopy = lastZodiacResults;
+                    } else if (targetId === 'numberResultText') {
+                        textToCopy = document.getElementById('numberResultText').textContent;
+                    } else {
+                        textToCopy = document.getElementById(targetId).textContent;
+                    }
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(textToCopy.trim()).then(() => {
+                        // 显示通知
+                        copyNotification.classList.add('show');
+                        
+                        setTimeout(() => {
+                            copyNotification.classList.remove('show');
+                        }, 2000);
+                    });
+                }
+            });
+            
+            // 平特数据分析函数
+            function analyzeData() {
+                const inputData = document.getElementById('inputData').value.trim();
+                if (!inputData) {
+                    alert('请输入平特数据');
+                    return;
+                }
+                
+                // 处理数据
+                const lines = inputData.split('\n');
+                const processedData = [];
+                let currentEntry = [];
+                
+                for (let line of lines) {
+                    line = line.trim();
+                    if (!line) continue;
+                    
+                    if (line.includes('期(')) { // 新的一期开始
+                        if (currentEntry.length > 0) {
+                            processedData.push(currentEntry);
+                            currentEntry = [];
+                        }
+                        currentEntry.push(line);
+                    } else {
+                        currentEntry.push(line);
+                    }
+                }
+                
+                if (currentEntry.length > 0) {
+                    processedData.push(currentEntry);
+                }
+
+                // 统计数字尾数、生肖和完整号码
+                const tailCounts = {};
+                const zodiacCounts = {};
+                const numberCounts = {};
+                const zodiacs = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+                
+                // 初始化所有尾数、生肖和号码为0
+                for (let i = 0; i <= 9; i++) {
+                    tailCounts[i] = 0;
+                }
+                for (let zodiac of zodiacs) {
+                    zodiacCounts[zodiac] = 0;
+                }
+                for (let i = 1; i <= 49; i++) {
+                    numberCounts[String(i).padStart(2, '0')] = 0;
+                }
+
+                let totalNumbers = 0;
+                
+                for (let entry of processedData) {
+                    const numbers = [];
+                    const zodiacsInEntry = [];
+                    
+                    for (let i = 1; i < entry.length; i++) { // 跳过第一期标题
+                        const item = entry[i];
+                        if (item === '特') continue;
+                        
+                        if (/^\d+$/.test(item)) { // 数字
+                            numbers.push(item);
+                        } else if (zodiacs.includes(item)) { // 生肖
+                            zodiacsInEntry.push(item);
+                        }
+                    }
+                    
+                    // 统计数字尾数
+                    for (let num of numbers) {
+                        const tail = num.slice(-1); // 取最后一位
+                        tailCounts[tail]++;
+                        totalNumbers++;
+                    }
+                    
+                    // 统计生肖
+                    for (let zodiac of zodiacsInEntry) {
+                        zodiacCounts[zodiac]++;
+                    }
+                    
+                    // 统计完整号码
+                    for (let num of numbers) {
+                        const formattedNum = num.padStart(2, '0');
+                        if (numberCounts.hasOwnProperty(formattedNum)) {
+                            numberCounts[formattedNum]++;
+                        }
+                    }
+                }
+
+                // 将统计结果转换为数组并排序
+                const sortedTailCounts = Object.entries(tailCounts)
+                    .map(([tail, count]) => ({ tail, count }))
+                    .sort((a, b) => b.count - a.count || a.tail - b.tail);
+                
+                const sortedZodiacCounts = Object.entries(zodiacCounts)
+                    .map(([zodiac, count]) => ({ zodiac, count }))
+                    .sort((a, b) => b.count - a.count || a.zodiac.localeCompare(b.zodiac));
+                
+                const sortedNumberCounts = Object.entries(numberCounts)
+                    .map(([number, count]) => ({ number, count }))
+                    .sort((a, b) => b.count - a.count || parseInt(a.number) - parseInt(b.number));
+
+                // 保存当前统计结果
+                currentStats = {
+                    date: new Date().toLocaleString(),
+                    totalNumbers,
+                    totalPeriods: processedData.length,
+                    mostTail: sortedTailCounts[0].tail,
+                    mostZodiac: sortedZodiacCounts[0].zodiac,
+                    tailCounts: sortedTailCounts,
+                    zodiacCounts: sortedZodiacCounts,
+                    numberCounts: sortedNumberCounts
+                };
+                
+                // 显示结果
+                displayResults(sortedTailCounts, sortedZodiacCounts, sortedNumberCounts, processedData.length, totalNumbers);
+            }
+
+            function displayResults(sortedTailCounts, sortedZodiacCounts, sortedNumberCounts, totalPeriods, totalNumbers) {
+                // 显示结果区域
+                document.getElementById('results').style.display = 'block';
+                
+                // 更新统计摘要
+                document.getElementById('totalNumbers').textContent = totalNumbers;
+                document.getElementById('totalPeriods').textContent = totalPeriods;
+                
+                // 找出最多尾数和最多生肖
+                           const maxTail = sortedTailCounts[0];
+            const maxZodiac = sortedZodiacCounts[0];
+            
+            document.getElementById('mostTail').textContent = maxTail.tail;
+            document.getElementById('mostZodiac').textContent = maxZodiac.zodiac;
+            
+            // 格式化尾数统计结果
+            const tailResult = formatGroupedResults(sortedTailCounts, "尾数统计", totalNumbers);
+            document.getElementById('tailCountResult').innerHTML = tailResult;
+            
+            // 格式化生肖统计结果
+            const zodiacResult = formatGroupedResults(sortedZodiacCounts, "生肖统计", totalNumbers);
+            document.getElementById('zodiacCountResult').innerHTML = zodiacResult;
+            
+            // 格式化号码统计结果
+            const numberResult = formatGroupedResults(sortedNumberCounts, "号码统计", totalNumbers);
+            document.getElementById('numberCountResult').innerHTML = numberResult;
+        }
+        
+        function formatGroupedResults(data, title, totalNumbers) {
+            // 按出现次数分组
+            const grouped = {};
+            data.forEach(item => {
+                if (!grouped[item.count]) {
+                    grouped[item.count] = [];
+                }
+                grouped[item.count].push(item);
+            });
+            
+            // 生成格式化文本
+            let result = `<div class="formatted-line"><strong>${title}（共 ${totalNumbers} 个）</strong></div>`;
+            
+            // 按次数从高到低排序
+            const sortedCounts = Object.keys(grouped).sort((a, b) => b - a);
+            
+            sortedCounts.forEach(count => {
+                const items = grouped[count];
+                const values = items.map(item => item.number || item.zodiac || item.tail).join(' ');
+                const total = items.length;
+                
+                result += `<div class="formatted-line">〖${count}次〗${values}（共计${total}个）</div>`;
+            });
+            
+            return result;
+        }
+
+        function clearData() {
+            document.getElementById('inputData').value = '';
+            document.getElementById('results').style.display = 'none';
+            currentStats = null;
+        }
+        
+        // 生肖统计函数
+        function analyzeZodiacData() {
+            const input = document.getElementById('zodiacInput').value.trim();
+            const resultDiv = document.getElementById('zodiacResultText');
+            const resultsContainer = document.getElementById('zodiacResults');
+            
+            if(!input) {
+                alert('请输入生肖内容');
+                return;
+            }
+            
+            // 提取并统计生肖次数
+            const chars = input.match(/[鼠牛虎兔龙蛇马羊猴鸡狗猪]/g) || [];
+            const count = SHENGXIAO.reduce((acc, s) => ({...acc, [s]:0}), {});
+            chars.forEach(c => count[c]++);
+            
+            // 按次数分组（包含0次）
+            const groups = {};
+            SHENGXIAO.forEach(s => {
+                const times = count[s];
+                if(!groups[times]) groups[times] = [];
+                groups[times].push(s);
+            });
+            
+            // 按次数降序排序分组
+            const sortedGroups = Object.entries(groups).sort((a, b) => b[0] - a[0]);
+            
+            // 生成显示结果
+            let html = '';
+            let textResult = "生肖统计：\n";
+            const total = chars.length;
+            
+            html += `<div class="formatted-line"><strong>生肖统计（共 ${total} 个）</strong></div>`;
+            
+            sortedGroups.forEach(([times, sList]) => {
+                // 同次数生肖按固定顺序排序
+                const sortedList = sList.sort((a, b) => SHENGXIAO.indexOf(a) - SHENGXIAO.indexOf(b));
+                const isZero = times === '0';
+                
+                // 显示用HTML
+                html += `<div class="formatted-line">〖${times}次〗${sortedList.join(' ')}（共${sortedList.length}个）</div>`;
+                
+                // 复制用文本（包含0次）
+                textResult += `〖${times}次〗${sortedList.join(' ')}（共计${sortedList.length}个）\n`;
+            });
+            
+            resultDiv.innerHTML = html;
+            lastZodiacResults = textResult;
+            resultsContainer.style.display = 'block';
+        }
+        
+        function clearZodiacData() {
+            document.getElementById('zodiacInput').value = '';
+            document.getElementById('zodiacResults').style.display = 'none';
+        }
+        
+        // 数字统计函数
+        function analyzeNumberData() {
+            const inputText = document.getElementById('numberInput').value;
+            const resultDiv = document.getElementById('numberResultText');
+            const resultsContainer = document.getElementById('numberResults');
+            
+            if (!inputText) {
+                alert('请输入包含01-49数字的文本');
+                return;
+            }
+            
+            // 使用正则表达式找出所有01-49的数字
+            const numbers = inputText.match(/\b([0-4][0-9])\b/g) || [];
+            
+            // 统计每个数字出现的次数
+            const countDict = {};
+            for (let num of numbers) {
+                countDict[num] = (countDict[num] || 0) + 1;
+            }
+            
+            // 创建按次数分类的字典
+            const frequencyDict = {};
+            for (let i = 1; i <= 49; i++) {
+                const numStr = i.toString().padStart(2, '0');
+                const count = countDict[numStr] || 0;
+                if (!frequencyDict[count]) {
+                    frequencyDict[count] = [];
+                }
+                frequencyDict[count].push(numStr);
+            }
+            
+            // 生成统计结果
+            let result = `基础统计（共 ${numbers.length} 个）\n`;
+            
+            // 按次数从高到低排序
+            const sortedCounts = Object.keys(frequencyDict).sort((a, b) => b - a);
+            
+            for (let count of sortedCounts) {
+                const nums = frequencyDict[count].sort();
+                result += `〖${count}次〗${nums.join(" ")}（共计${nums.length}个）\n`;
+            }
+            
+            // 确保0次的数据总是显示
+            if (!frequencyDict[0]) {
+                const missingNums = [];
+                for (let i = 1; i <= 49; i++) {
+                    const numStr = i.toString().padStart(2, '0');
+                    if (!countDict[numStr]) {
+                        missingNums.push(numStr);
+                    }
+                }
+                result += `〖0次〗${missingNums.join(" ")}（共计${missingNums.length}个）\n`;
+            }
+            
+            resultDiv.textContent = result;
+            resultsContainer.style.display = 'block';
+        }
+        
+        function clearNumberData() {
+            document.getElementById('numberInput').value = '';
+            document.getElementById('numberResults').style.display = 'none';
+        }
+        
+        // 保存统计结果
+        function saveStats() {
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+            
+            if (!currentStats) {
+                alert('没有可保存的统计结果');
+                return;
+            }
+            
+            // 查找当前用户
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
+            if (userIndex === -1) {
+                alert('用户不存在');
+                return;
+            }
+            
+            // 添加到历史记录
+            users[userIndex].statsHistory = users[userIndex].statsHistory || [];
+            users[userIndex].statsHistory.unshift(currentStats);
+            
+            // 限制历史记录数量为5条
+            if (users[userIndex].statsHistory.length > 5) {
+                users[userIndex].statsHistory = users[userIndex].statsHistory.slice(0, 5);
+            }
+            
+            // 更新本地存储
+            localStorage.setItem('lotteryStatsUsers', JSON.stringify(users));
+            
+            // 更新当前用户
+            currentUser = users[userIndex];
+            
+            alert('统计结果已保存');
+        }
+        
+        // 显示历史记录
+        function showHistory() {
+            if (!currentUser) {
+                alert('请先登录');
+                return;
+            }
+            
+            // 查找当前用户
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
+            if (userIndex === -1) {
+                alert('用户不存在');
+                return;
+            }
+            
+            const history = users[userIndex].statsHistory || [];
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="no-history">暂无历史记录</div>';
+            } else {
+                historyList.innerHTML = '';
+                history.forEach((record, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    
+                    let statsHtml = `
+                        <div class="history-date">${record.date}</div>
+                        <div class="history-stats">
+                            <p>总号码数: ${record.totalNumbers}</p>
+                            <p>总期数: ${record.totalPeriods}</p>
+                            <p>最多尾数: ${record.mostTail}</p>
+                            <p>最多生肖: ${record.mostZodiac}</p>
+                    `;
+                    
+                    historyItem.innerHTML = statsHtml;
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            historyModal.classList.add('show');
+        }
+    });
+</script>
+</body>
+</html>
